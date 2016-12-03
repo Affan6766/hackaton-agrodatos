@@ -1,10 +1,18 @@
 
 opts.gpus = [] ;
 
+class_names = {...
+  'background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', ...
+  'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', ...
+  'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor'} ;
+class_number = 1:length(class_names);
+
 %% load and configure the FCNN
 
 % load the pre-trained CNN
-net = dagnn.DagNN.loadobj(load(fullfile(pwd, 'data', 'models', 'pascal-fcn32s-dag.mat')));
+if (exist('net', 'var')==0)
+    net = dagnn.DagNN.loadobj(load(fullfile(pwd, 'data', 'models', 'pascal-fcn32s-dag.mat')));
+end
 
 % setup the net in test mode
 net.mode = 'test';
@@ -16,8 +24,9 @@ net.mode = 'test';
 %net.meta.normalization.averageImage = reshape(net.meta.normalization.rgbMean,1,1,3) ;
 
 % TODO: GUATAFAC
-predVar = net.getVarIndex('prediction') ;
-inputVar = 'input' ;
+predVar = net.getVarIndex('upscore') ;
+%inputVar = 'input' ;
+inputVar = 'data' ;
 imageNeedsToBeMultiple = true ;
 
 % setup the gpu
@@ -36,18 +45,15 @@ im_ = single(im);
 im_ = imresize(im_, net.meta.normalization.imageSize(1:2));
 im_ = bsxfun(@minus, im_, net.meta.normalization.averageImage);
 
-% run the CNN
-net.eval({'data', im_});
-
 %% run the fcnn
 
 % Some networks requires the image to be a multiple of 32 pixels
 if imageNeedsToBeMultiple
-    sz = [size(im,1), size(im,2)] ;
+    sz = [size(im_,1), size(im_,2)] ;
     sz_ = round(sz / 32)*32 ;
-    im_ = imresize(im, sz_) ;
+    im_ = imresize(im_, sz_) ;
 else
-    im_ = im ;
+    im_ = im_ ;
 end
 
 % if there is a gpu, turn it to a gpu array
@@ -70,3 +76,9 @@ end
 %% display results
 
 figure, imagesc(pred);
+current_labels_ids = unique(pred);
+current_labels = class_names(current_labels_ids);
+for i = 1 : length(current_labels)
+    current_labels{i} = strcat(current_labels{i}, '-', num2str(current_labels_ids(i)));
+end
+xlabel(current_labels);
