@@ -1,8 +1,11 @@
-./Overfeat/data/default/
-local/
-data/
+# Temp files
+*.DS_Store
 *~
+*.asv
 
-/net-train.pdf
-/imagenet-vgg-f.mat
+# Data extensions
+*.wmv
+*.jpg
+*.png
+*.bmp
 *.mat
