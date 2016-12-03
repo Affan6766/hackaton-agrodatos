@@ -3,4 +3,7 @@
 	url = https://github.com/sermanet/OverFeat.git
 [submodule "matconvnet-fcn"]
 	path = matconvnet-fcn
-	url = https://github.com/vlfeat/matconvnet-fcn.git
+	url = https://github.com/ignaciorlando/matconvnet-fcn.git
+[submodule "matconvnet"]
+	path = matconvnet
+	url = https://github.com/ignaciorlando/matconvnet.git
