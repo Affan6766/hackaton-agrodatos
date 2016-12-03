@@ -7,6 +7,7 @@ addpath(genpath(fullfile(root, 'matconvnet-fcn')));
 addpath(genpath(fullfile(root, 'matconvnet')));
 
 % configure matconvnet
+vl_compilenn;
 vl_setupnn;
 
 clear

@@ -1,1 +1,8 @@
 ./Overfeat/data/default/
+local/
+data/
+*~
+
+/net-train.pdf
+/imagenet-vgg-f.mat
+*.mat
