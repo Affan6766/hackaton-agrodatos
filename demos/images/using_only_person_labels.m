@@ -21,19 +21,10 @@ end
 % load image
 im = imread(fullfile(pwd, 'demos', 'images', 'data', 'images', 'empy.jpg'));
 
-% turn it to single, resize it and subtract the mean image
-original_size = [size(im,1), size(im,2)] ;
-im_ = preprocess_image(im, net.meta);
-
 %% run the fcnn
 
-% if there is a gpu, turn it to a gpu array
-if ~isempty(opts.gpus)
-    im_ = gpuArray(im_) ;
-end
-
 % segment only persons and background
-pred = deep_semantic_segmentation(im_, net, original_size, important_labels);
+pred = deep_semantic_segmentation(im, net, opts, important_labels);
 
 %% display results
 

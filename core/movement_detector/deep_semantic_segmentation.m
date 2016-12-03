@@ -1,6 +1,17 @@
 
-function pred = deep_semantic_segmentation(im_, net, original_size, filter_labels)
+function pred = deep_semantic_segmentation(input_image, net, opts, filter_labels)
 
+    % get input image size
+    original_size = [size(input_image, 1), size(input_image, 2)];
+
+    % preprocess current frame
+    im_ = preprocess_image(input_image, net.meta);
+
+    % if there is a gpu, turn it to a gpu array
+    if ~isempty(opts.gpus)
+        im_ = gpuArray(im_) ;
+    end
+    
     % eval the fcnn on im_
     net.eval({'data', im_}) ;
     % get scores in the output
