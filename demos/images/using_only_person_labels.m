@@ -8,25 +8,12 @@ class_names = {...
 class_number = 1:length(class_names);
 
 important_labels = [1, 16];
-class_names = class_names(important_labels);
-class_number = class_number(important_labels);
 
 %% load and configure the FCNN
 
 % load the pre-trained CNN
 if (exist('net', 'var')==0)
-    net = load_pretrained_model(fullfile(pwd, 'core', 'models', 'pascal-fcn8s-dag.mat'));
-end
-
-% TODO: GUATAFAC
-predVar = net.getVarIndex('upscore') ;
-inputVar = 'data' ;
-imageNeedsToBeMultiple = true ;
-
-% setup the gpu
-if ~isempty(opts.gpus)
-  gpuDevice(opts.gpus(1)) ;
-  net.move('gpu') ;
+    net = load_pretrained_model(fullfile(pwd, 'core', 'models', 'pascal-fcn8s-dag.mat'), opts);
 end
 
 %% load and preprocess an image
@@ -36,7 +23,7 @@ im = imread(fullfile(pwd, 'demos', 'images', 'data', 'images', 'empy.jpg'));
 
 % turn it to single, resize it and subtract the mean image
 original_size = [size(im,1), size(im,2)] ;
-im_ = preprocess_image(im, net.meta, imageNeedsToBeMultiple);
+im_ = preprocess_image(im, net.meta);
 
 %% run the fcnn
 
@@ -45,18 +32,8 @@ if ~isempty(opts.gpus)
     im_ = gpuArray(im_) ;
 end
 
-% eval the fcnn on the toy image
-net.eval({inputVar, im_}) ;
-scores_ = gather(net.vars(predVar).value) ;
-scores_ = scores_(:,:,important_labels);
-[~,pred_] = max(scores_,[],3) ;
-
-% predict the segmentation
-if imageNeedsToBeMultiple
-    pred = imresize(pred_, original_size, 'method', 'nearest') ;
-else
-    pred = pred_ ;
-end
+% segment only persons and background
+pred = deep_semantic_segmentation(im_, net, original_size, important_labels);
 
 %% display results
 
