@@ -11,11 +11,8 @@ class_number = 1:length(class_names);
 
 % load the pre-trained CNN
 if (exist('net', 'var')==0)
-    net = dagnn.DagNN.loadobj(load(fullfile(pwd, 'data', 'models', 'pascal-fcn32s-dag.mat')));
+    net = load_pretrained_model(fullfile(pwd, 'core', 'models', 'pascal-fcn32s-dag.mat'));
 end
-
-% setup the net in test mode
-net.mode = 'test';
 
 % TODO: GUATAFAC
 predVar = net.getVarIndex('upscore') ;
@@ -31,23 +28,13 @@ end
 %% load and preprocess an image
 
 % load image
-im = imread(fullfile(pwd, 'data', 'images', 'test_cow.png'));
+im = imread(fullfile(pwd, 'demos', 'images', 'data', 'images', 'cubierta1.png'));
 
 % turn it to single, resize it and subtract the mean image
-im_ = single(im);
-im_ = imresize(im_, net.meta.normalization.imageSize(1:2));
-im_ = bsxfun(@minus, im_, net.meta.normalization.averageImage);
+original_size = [size(im,1), size(im,2)] ;
+im_ = preprocess_image(im, net.meta, imageNeedsToBeMultiple);
 
 %% run the fcnn
-
-% Some networks requires the image to be a multiple of 32 pixels
-if imageNeedsToBeMultiple
-    sz = [size(im_,1), size(im_,2)] ;
-    sz_ = round(sz / 32)*32 ;
-    im_ = imresize(im_, sz_) ;
-else
-    im_ = im_ ;
-end
 
 % if there is a gpu, turn it to a gpu array
 if ~isempty(opts.gpus)
@@ -61,14 +48,17 @@ scores_ = gather(net.vars(predVar).value) ;
 
 % predict the segmentation
 if imageNeedsToBeMultiple
-    pred = imresize(pred_, sz, 'method', 'nearest') ;
+    pred = imresize(pred_, original_size, 'method', 'nearest') ;
 else
     pred = pred_ ;
 end
 
 %% display results
 
-figure, imagesc(pred);
+figure
+subplot(1,2,1); imshow(uint8(im));
+subplot(1,2,2); imshow(pred,[]);
+axis equal;
 current_labels_ids = unique(pred);
 current_labels = class_names(current_labels_ids);
 for i = 1 : length(current_labels)
