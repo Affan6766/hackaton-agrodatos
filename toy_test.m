@@ -16,16 +16,9 @@ end
 
 % setup the net in test mode
 net.mode = 'test';
-% for name = {'objective', 'accuracy'}
-%   net.removeLayer(name) ;
-% end
-
-% get average image
-%net.meta.normalization.averageImage = reshape(net.meta.normalization.rgbMean,1,1,3) ;
 
 % TODO: GUATAFAC
 predVar = net.getVarIndex('upscore') ;
-%inputVar = 'input' ;
 inputVar = 'data' ;
 imageNeedsToBeMultiple = true ;
 
