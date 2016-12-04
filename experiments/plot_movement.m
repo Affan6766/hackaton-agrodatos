@@ -2,7 +2,7 @@
 opts.gpus = [] ;
 
 %% setup variables
-video_filename = 'demos/video/data/camara15-11-16.mov';
+video_filename = 'demos/video/data/camara15-11-16';
 begin_parse = 26;
 end_parse = 35;
 

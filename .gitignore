@@ -6,9 +6,9 @@
 # Data extensions
 *.wmv
 *.jpg
-*.png
 *.bmp
 *.mat
+*.png
 *.mp4
 *.mov
 *.avi

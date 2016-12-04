@@ -25,7 +25,7 @@ function [ frames ] = parse_video( filename, start_time, end_time )
 
         % initialize a 4D matrix (height, width, RGB, time)
         frames_count = ceil((end_time - start_time) * video.FrameRate);
-        frames = uint8(zeros(video.Height, video.Width, 3, frames_count));
+        frames = zeros(video.Height, video.Width, 3, frames_count, 'uint8');
 
         % start in the given second
         video.CurrentTime = start_time;
@@ -40,7 +40,7 @@ function [ frames ] = parse_video( filename, start_time, end_time )
         end
         
         % save sequence of frames as a .mat file
-        save(potential_filename, 'frames');
+        save(strcat(filename,'_', num2str(start_time),'-',num2str(end_time), '.mat'), 'frames','-v7.3');
     end
 
 end
