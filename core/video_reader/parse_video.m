@@ -12,7 +12,7 @@ function [ frames ] = parse_video( filename, start_time, end_time )
         file_loaded = false;
         
         for i = 1:length(formats)
-            potential_filename = strcat(filename,formats(i));
+            potential_filename = strcat(filename, '.', formats{i});
             if exist(potential_filename, 'file')
                 video = VideoReader(potential_filename);
                 file_loaded = true;
@@ -38,6 +38,9 @@ function [ frames ] = parse_video( filename, start_time, end_time )
                 break;
             end
         end
+        
+        % save sequence of frames as a .mat file
+        save(potential_filename, 'frames');
     end
 
 end
