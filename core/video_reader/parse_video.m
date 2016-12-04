@@ -23,11 +23,14 @@ function [ frames ] = parse_video( filename, start_time, end_time )
             error('Video file could not be found.');
         end
 
+        % initialize a 4D matrix (height, width, RGB, time)
         frames_count = ceil((end_time - start_time) * video.FrameRate);
         frames = uint8(zeros(video.Height, video.Width, 3, frames_count));
 
+        % start in the given second
         video.CurrentTime = start_time;
 
+        % read frames until reaching frames_count
         for frame_i = 1:frames_count
             if hasFrame(video)
                 frames(:,:,:,frame_i) = uint8(readFrame(video));
