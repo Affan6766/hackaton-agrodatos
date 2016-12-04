@@ -50,6 +50,7 @@ legend('Square relative entropy', 'Location', 'northwest');
 xlabel('# frame');
 ylabel('Square relative entropy between frames');
 set(findall(gcf,'-property','FontSize'),'FontSize',14')
+grid on
 
 %% save video
 

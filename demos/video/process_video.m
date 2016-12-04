@@ -1,15 +1,16 @@
 %% config params
 video_filename = 'demos/video/data/camara15-11-16';
-start_time = 38;
-end_time = 45;
+start_time = 26;
+end_time = 35;
 
-movement_threshold = 1;
+movement_threshold = 55;
 
 recording_label_filename = 'core/video_writer/images/rec.png';
 recording_label = imread(recording_label_filename);
 label_position = [40,40];
 
 output_filename = 'demos/video/output/camara15-11-16';
+output_filename = strcat(output_filename, '_', num2str(start_time), '-', num2str(end_time));
 [path, ~, ~] = fileparts(output_filename);
 mkdir(path);
 
@@ -49,16 +50,21 @@ preprocessed_frames = preprocess_frames_for_movement_detection(frames);
 
 fprintf('Quantifying movement... ');
 
-movement_timeline = measure_movement(preprocessed_frames, foregrounds_batch);
-changes = find(movement_timeline > movement_threshold);
-main_change = changes(1);
-
+% initialize an array of movements
+movements = zeros(size(frames,4), 1);
+% for each of the frames
+for i = 1:size(frames,4)-1
+    % compute movement score between this frame and the next one
+    [movements(i), ~] = measure_movement(preprocessed_frames(:,:,i:i+1), foregrounds_batch(:,:,i:i+1));
+end
+significant_movements = find(movements > movement_threshold);
+main_change = significant_movements(1);
 fprintf('main change found in frame %d', main_change);
 
 %% print recording label in frames after movement detection
 
 fprintf('Printing video...\n');
-for i = main_change:size(frames,4)
+for i = main_change:size(frames,4)-1
     frames(:,:,:,i) = burn_image_into_frame(frames(:,:,:,i), recording_label, label_position(1), label_position(2));
 end
 

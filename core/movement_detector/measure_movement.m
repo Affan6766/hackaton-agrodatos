@@ -31,8 +31,11 @@ function [ movement, heat_map ] = measure_movement( frames, masks )
     pi = imhist(frames(:,:,1), 256);
     pi_next = imhist(frames(:,:,2), 256);
     
-    re = sum(pi .* log(pi ./ pi_next));
+    re = sum(pi .* log((pi ./ pi_next)));
     movement = sqrt(re);
+    if (isnan(movement))
+        movement = 0;
+    end
 
     % get the difference between frames
     frames_diff = (frames(:,:,1) - frames(:,:,2)).^2;
