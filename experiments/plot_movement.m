@@ -3,8 +3,8 @@ opts.gpus = [] ;
 
 %% setup variables
 video_filename = 'demos/video/data/camara15-11-16';
-begin_parse = 26;
-end_parse = 35;
+start_time = 26;
+end_time = 35;
 
 %% load the cnn
 
@@ -17,7 +17,7 @@ end
 
 % parse video from begin to end
 fprintf('Parse video...\n');
-frames = parse_video(video_filename, begin_parse, end_parse);
+frames = parse_video(video_filename, start_time, end_time);
 % convert each frame to grayscale and normalize gray intensities
 fprintf('Converting each frame to grayscale and normalizing...\n');
 frames_grayscale = preprocess_frames_for_movement_detection(frames);
@@ -45,8 +45,12 @@ for i = 1:size(frames,4)-1
 end
 
 %% plot
-plot(movements);
+plot(movements, 'LineWidth', 2);
+legend('Square relative entropy', 'Location', 'northwest');
+xlabel('# frame');
+ylabel('Square relative entropy between frames');
+set(findall(gcf,'-property','FontSize'),'FontSize',14')
 
 %% save video
 
-save_video_sequence(fullfile('experiments', 'data', strcat('camara15-11-16_', num2str(begin_parse), '-', num2str(end_parse), '.avi')), heat_maps);
+save_video_sequence(fullfile('experiments', 'data', strcat('camara15-11-16_', num2str(start_time), '-', num2str(end_time), '.avi')), heat_maps);
