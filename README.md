@@ -1,4 +1,4 @@
-#deepcamera
+# deepcamera
 
 deepcamera permite el almacenamiento digital e inteligente de secuencias de videovigilancia en barcos pesqueros. 
 
@@ -9,7 +9,7 @@ El enfoque también puede aplicarse sobre secuencias de video ya capturadas, de 
 Copyright (c) Pablo Rubí, José Ignacio Orlando
 
 
-##Requerimientos
+## Requerimientos
 
 macOS Sierra o Microsoft Windows
 MATLAB R2015a
